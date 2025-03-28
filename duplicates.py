@@ -23,37 +23,33 @@ class Duplicates:
     def run(self):
  
         issues:List[Issue] = DataLoader().get_issues()
-        
         duplicates:int = 0  
-        duplicate_owner = []
-        duplicate_reporter = []
+        duplicate_issues:List[Issue] = []
+        duplicate_events:List[Event] = []
         for issue in issues:        
-            check = False
+            check:bool = False
             for e in issue.events:
                 if e.comment is not None and "duplicate" in e.comment:
                     if check == False:
                         duplicates+=1
                         check = True
                         print(issue.number)
-                        duplicate_owner.append(issue.creator)
-                        duplicate_reporter.append(e.author)
-                
-        print('\n\n'+str(duplicates)+'\n\n')
-        
-                ### BAR CHART
+                        duplicate_issues.append(issue)
+                        duplicate_events.append(e)
+                       
         top_n:int = 50
-        title1:string = f"Top {top_n} duplicate issue creators"
-        df = pd.DataFrame(duplicate_owner)
-        df_hist = df.value_counts().nlargest(top_n).plot(kind="bar", figsize=(14,8), title=title1)
+        title1:str = f"Top {top_n} duplicate issue creators"
+        df = pd.DataFrame.from_records([{'creator':issue.creator} for issue in duplicate_issues])
+        df_hist = df.groupby(df["creator"]).value_counts().nlargest(top_n).plot(kind="bar", figsize=(14,8), title=title1)
         df_hist.set_xlabel("Creator Names")
-        df_hist.set_ylabel("# of issues created that were duplicates")
+        df_hist.set_ylabel("# of issues created")
         plt.show() 
 
-        title2:string = f"Top {top_n} duplicate issue reporters"
-        df = pd.DataFrame(duplicate_reporter)
-        df_hist = df.value_counts().nlargest(top_n).plot(kind="bar", figsize=(14,8), title = title2)
+        title2:str = f"Top {top_n} duplicate issue reporters"
+        df = pd.DataFrame.from_records([{'author':e.author} for e in duplicate_events])
+        df_hist = df.groupby(df["author"]).value_counts().nlargest(top_n).plot(kind="bar", figsize=(14,8), title=title2)
         df_hist.set_xlabel("Creator Names")
-        df_hist.set_ylabel("# of issues that author reported as duplicate")
+        df_hist.set_ylabel("# of issues that author reported as duplicates")
         plt.show() 
     
 
