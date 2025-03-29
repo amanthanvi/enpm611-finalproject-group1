@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 
 from data_loader import DataLoader
-from duplicate_finder import DuplicateFinder
+from duplicates_finder import DuplicateFinder
 from model import Issue,Event
 import config
 
