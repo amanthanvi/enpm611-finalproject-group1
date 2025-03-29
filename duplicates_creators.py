@@ -4,6 +4,7 @@ import numpy as np
 import pandas as pd
 
 from data_loader import DataLoader
+from duplicate_finder import DuplicateFinder
 from model import Issue,Event
 import config
 
@@ -21,21 +22,9 @@ class Duplicates:
         self.USER:str = config.get_parameter('user')
     
     def run(self):
- 
-        issues:List[Issue] = DataLoader().get_issues()
-        duplicates:int = 0  
-        duplicate_issues:List[Issue] = []
-        duplicate_events:List[Event] = []
-        for issue in issues:        
-            check:bool = False
-            for e in issue.events:
-                if e.comment is not None and "duplicate" in e.comment:
-                    if check == False:
-                        duplicates+=1
-                        check = True
-                        print(issue.number)
-                        duplicate_issues.append(issue)
-                        duplicate_events.append(e)
+
+        duplicate_issues:List[Issue] = DuplicateFinder().find_duplicate_issues()
+        duplicate_events:List[Event] = DuplicateFinder().find_duplicate_events()
                        
         top_n:int = 50
         title1:str = f"Top {top_n} duplicate issue creators"

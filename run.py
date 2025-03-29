@@ -9,7 +9,7 @@ import argparse
 
 import config
 from example_analysis import ExampleAnalysis
-from duplicates import Duplicates
+from duplicates_creators import Duplicates
 
 
 def parse_args():
