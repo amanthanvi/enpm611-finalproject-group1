@@ -29,9 +29,9 @@ class DuplicateFinder:
         self.duplicate_events = duplicate_events
     
 
-    def find_duplicate_issues(self):
+    def get_duplicate_issues(self):
         return self.duplicate_issues
         
-    def find_duplicate_events(self):
+    def get_duplicate_events(self):
         return self.duplicate_events
 

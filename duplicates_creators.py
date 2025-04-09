@@ -9,22 +9,14 @@ from model import Issue,Event
 import config
 
 class Duplicates:
-    """
-    Implements an example analysis of GitHub
-    issues and outputs the result of that analysis.
-    """
     
     def __init__(self):
-        """
-        Constructor
-        """
-        # Parameter is passed in via command line (--user)
-        self.USER:str = config.get_parameter('user')
+        pass
     
     def run(self):
 
-        duplicate_issues:List[Issue] = DuplicateFinder().find_duplicate_issues()
-        duplicate_events:List[Event] = DuplicateFinder().find_duplicate_events()
+        duplicate_issues:List[Issue] = DuplicateFinder().get_duplicate_issues()
+        duplicate_events:List[Event] = DuplicateFinder().get_duplicate_events()
                        
         top_n:int = 50
         title1:str = f"Top {top_n} duplicate issue creators"
