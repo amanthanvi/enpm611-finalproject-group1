@@ -1,9 +1,9 @@
-
 import json
 from typing import List
 
 import config
 from model import Issue
+from config import prompt_for_data_file
 
 # Store issues as singleton to avoid reloads
 _ISSUES:List[Issue] = None
@@ -17,7 +17,7 @@ class DataLoader:
         """
         Constructor
         """
-        self.data_path:str = config.get_parameter('ENPM611_PROJECT_DATA_PATH')
+        self.data_path: str = prompt_for_data_file()
         
     def get_issues(self):
         """

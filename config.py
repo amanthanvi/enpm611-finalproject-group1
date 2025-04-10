@@ -3,6 +3,7 @@ logger = logging.getLogger(__name__)
 
 import json
 import os
+import glob
 
 '''
 Handles the loading of the config file as well as the access of specific
@@ -121,3 +122,28 @@ def overwrite_from_args(args):
                 set_parameter(name, value)
     except:
         pass
+
+
+def prompt_for_data_file():
+    """
+    Lists JSON files in the 'data' folder and prompts the user to select one.
+    """
+    data_folder = os.path.join(os.getcwd(), 'data')
+    json_files = glob.glob(os.path.join(data_folder, '*.json'))
+    
+    if not json_files:
+        raise FileNotFoundError("No JSON files found in the 'data' folder.")
+    
+    print("Available JSON files:")
+    for idx, file in enumerate(json_files, start=1):
+        print(f"{idx}: {os.path.basename(file)}")
+    
+    while True:
+        try:
+            choice = int(input("Select a file by number: "))
+            if 1 <= choice <= len(json_files):
+                return json_files[choice - 1]
+            else:
+                print("Invalid choice. Please select a valid number.")
+        except ValueError:
+            print("Invalid input. Please enter a number.")
