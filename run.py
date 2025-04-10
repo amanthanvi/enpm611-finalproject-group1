@@ -1,58 +1,66 @@
-
-
 """
 Starting point of the application. This module is invoked from
 the command line to run the analyses.
 """
 
 import argparse
+import importlib
+import os
+import inspect
 
 import config
-from example_analysis import ExampleAnalysis
-from duplicates_creators import Duplicates
 
 
-def parse_args():
+def list_module_functions():
     """
-    Parses the command line arguments that were provided along
-    with the python command. The --feature flag must be provided as
-    that determines what analysis to run. Optionally, you can pass in
-    a user and/or a label to run analysis focusing on specific issues.
-    
-    You can also add more command line arguments following the pattern
-    below.
+    Dynamically lists all callable functions in the 'modules' folder.
     """
-    ap = argparse.ArgumentParser("run.py")
+    modules_folder = os.path.join(os.getcwd(), 'modules')
+    module_files = [f for f in os.listdir(modules_folder) if f.endswith('.py') and f != '__init__.py']
     
-    # Required parameter specifying what analysis to run
-    ap.add_argument('--feature', '-f', type=int, required=True,
-                    help='Which of the three features to run')
-    
-    # Optional parameter for analyses focusing on a specific user (i.e., contributor)
-    ap.add_argument('--user', '-u', type=str, required=False,
-                    help='Optional parameter for analyses focusing on a specific user')
-    
-    # Optional parameter for analyses focusing on a specific label
-    ap.add_argument('--label', '-l', type=str, required=False,
-                    help='Optional parameter for analyses focusing on a specific label')
-    
-    return ap.parse_args()
+    functions = {}
+    for module_file in module_files:
+        module_name = module_file[:-3]  # Remove the .py extension
+        module = importlib.import_module(f'modules.{module_name}')
+        for name, obj in inspect.getmembers(module, inspect.isfunction):
+            # Use the full file name for display
+            functions[module_file] = obj
+    return functions
 
 
+def main():
+    """
+    Main entry point for the application.
+    """
+    functions = list_module_functions()
+    if not functions:
+        print("No functions found in the 'modules' folder.")
+        return
 
-# Parse feature to call from command line arguments
-args = parse_args()
-# Add arguments to config so that they can be accessed in other parts of the application
-config.overwrite_from_args(args)
-    
-# Run the feature specified in the --feature flag
-if args.feature == 0:
-    ExampleAnalysis().run()
-elif args.feature == 1:
-    Duplicates().run()
-elif args.feature == 2:
-    pass # TODO call second analysis
-elif args.feature == 3:
-    pass # TODO call third analysis
-else:
-    print('Need to specify which feature to run with --feature flag.')
+    while True:
+        print("Available modules:")
+        for idx, module_name in enumerate(functions.keys(), start=1):
+            print(f"{idx}: {module_name}")
+        print("\nR: Refresh list of modules")
+        print("Q: Exit")
+
+        selection = input("Select a module to run by number (or R to refresh, Q to exit): ").strip().upper()
+
+        if selection == "Q":
+            print("Exiting the program.")
+            break
+        elif selection == "R":
+            print("Refreshing the list of modules...")
+            functions = list_module_functions()
+            continue
+
+        try:
+            selected_func = list(functions.values())[int(selection) - 1]
+            print(f"Running: {list(functions.keys())[int(selection) - 1]}")
+            selected_func()
+        except (ValueError, IndexError):
+            print("Invalid selection. Please try again.")
+
+
+if __name__ == '__main__':
+    main()
