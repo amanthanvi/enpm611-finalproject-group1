@@ -20,13 +20,13 @@ days_30plus:int = 0
 for time in time_list:
     if time.days == 0:
         days_0_1 +=1
-    elif time.days > 1 and time.days < 5:
+    elif time.days > 0 and time.days < 8:
         days_1_5 +=1
-    elif time.days > 5 and time.days < 30:
+    elif time.days > 7 and time.days < 30:
         days_5_30 +=1  
     elif time.days > 30:
         days_30plus +=1 
     else:
-        print('uh oh')
+        print(time)
 
 print(days_0_1, days_1_5, days_5_30, days_30plus)
