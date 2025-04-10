@@ -16,7 +16,7 @@ def list_module_functions():
     Dynamically lists all callable functions in the 'modules' folder.
     """
     modules_folder = os.path.join(os.getcwd(), 'modules')
-    module_files = [f for f in os.listdir(modules_folder) if f.endswith('.py') and f != '__init__.py']
+    module_files = sorted([f for f in os.listdir(modules_folder) if f.endswith('.py') and f != '__init__.py'])  # Sort files alphabetically
     
     functions = {}
     for module_file in module_files:
