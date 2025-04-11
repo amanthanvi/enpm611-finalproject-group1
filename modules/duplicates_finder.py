@@ -35,3 +35,11 @@ class DuplicateFinder:
     def get_duplicate_events(self):
         return self.duplicate_events
 
+def find_duplicates():
+    """
+    Finds and returns duplicate issues and events.
+    """
+    finder = DuplicateFinder()
+    print("Duplicate issues:", finder.get_duplicate_issues())
+    print("Duplicate events:", finder.get_duplicate_events())
+

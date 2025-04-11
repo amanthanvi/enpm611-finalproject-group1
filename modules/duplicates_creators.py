@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 
 from data_loader import DataLoader
-from duplicates_finder import DuplicateFinder
+from .duplicates_finder import DuplicateFinder
 from model import Issue,Event
 import config
 
@@ -32,6 +32,12 @@ class Duplicates:
         df_hist.set_xlabel("Creator Names")
         df_hist.set_ylabel("# of issues that author reported as duplicates")
         plt.show() 
+
+def analyze_creators():
+    """
+    Analyzes duplicate issue creators and reporters.
+    """
+    Duplicates().run()
     
 
 if __name__ == '__main__':
