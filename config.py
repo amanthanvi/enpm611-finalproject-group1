@@ -134,13 +134,13 @@ def prompt_for_data_file():
     if not json_files:
         raise FileNotFoundError("No JSON files found in the 'data' folder.")
     
-    print("Available JSON files:")
+    print("\nAvailable JSON files:")
     for idx, file in enumerate(json_files, start=1):
         print(f"{idx}: {os.path.basename(file)}")
     
     while True:
         try:
-            choice = int(input("Select a file by number: "))
+            choice = int(input("\nSelect a file by number: "))
             if 1 <= choice <= len(json_files):
                 return json_files[choice - 1]
             else:
