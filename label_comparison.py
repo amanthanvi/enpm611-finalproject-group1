@@ -10,7 +10,8 @@ import config
 
 def compare_labels():
     """
-    Compares the distribution of issue creation times by hour.
+    Compares labels between all issues and duplicate issues, seeing which label is more frequent for duplicate issues
+    Also looks at what are considered duplicate issues, by label or by mention in comment
     """
     ALL_labels_dict:dict = {"none":0}
     DUP_status_list:List[Issue] = []
