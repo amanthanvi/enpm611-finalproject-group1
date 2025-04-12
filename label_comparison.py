@@ -33,14 +33,6 @@ def compare_labels():
     ALL_sorted_vals = sorted(list(ALL_labels_dict.values()),reverse=True)
     ALL_label_percent = [float(format(x*100/len(ALL_issues), '.2f')) for x in ALL_sorted_vals]
     # Create the plot
-    plt.bar(ALL_sorted_labels[:10], ALL_label_percent[:10])
-
-    # Add labels and title
-    plt.xlabel('Label Name')
-    plt.xticks(rotation=45, ha='right')
-    plt.ylabel('Percent of Issues')
-    plt.title('Top Labels for All Issues')
-    plt.show() 
     
     
     DUP_labels_dict:dict = {"none":0}
@@ -59,16 +51,38 @@ def compare_labels():
     DUP_sorted_labels = sorted(DUP_labels_dict, key=DUP_labels_dict.get, reverse=True)
     DUP_sorted_vals = sorted(list(DUP_labels_dict.values()),reverse=True)
     DUP_label_percent = [float(format(x*100/len(DUP_issues), '.2f')) for x in DUP_sorted_vals]
-    # Create the plot
-    plt.bar(DUP_sorted_labels[:10], DUP_label_percent[:10])
+ 
 
-    # Add labels and title
+    comparison_vals:List[float] = []
+    for label in ALL_sorted_labels[:10]:
+        percent_val = float(format(DUP_labels_dict[label]*100/len(DUP_issues), '.2f'))
+        comparison_vals.append(percent_val)
+    
+    label_percent_delta = [float(format(a - b, '.2f')) for a, b in zip(comparison_vals, ALL_label_percent)]
+    
+       # Create the plot
+    plt.figure(1)
+    plt.bar(ALL_sorted_labels[:10], ALL_label_percent[:10])
     plt.xlabel('Label Name')
     plt.xticks(rotation=45, ha='right')
     plt.ylabel('Percent of Issues')
-    plt.title('Top Labels for Duplicate Issues')
+    plt.title('Top 10 Labels for All Issues')
+    
+    plt.figure(2)
+    plt.bar(DUP_sorted_labels[:10], DUP_label_percent[:10])
+    plt.xlabel('Label Name')
+    plt.xticks(rotation=45, ha='right')
+    plt.ylabel('Percent of Issues')
+    plt.title('Top 10 Labels for Duplicate Issues')
     plt.show() 
 
+    plt.figure(3)
+    plt.bar(ALL_sorted_labels[:10], label_percent_delta)
+    plt.xlabel('Label Name')
+    plt.xticks(rotation=45, ha='right')
+    plt.ylabel('Percent of Issues Difference')
+    plt.title('Percent of Labels for Duplicate Issues vs All Issues')
+    plt.show() 
 
     found_original:List[Issue] = []
     not_found_original:List[Issue] = []
