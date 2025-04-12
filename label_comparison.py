@@ -16,7 +16,6 @@ def compare_labels():
     ALL_labels_dict:dict = {"none":0}
     DUP_status_list:List[Issue] = []
     ALL_issues:List[Issue] = DataLoader().get_issues()
-    ALL_hourlist:List[float] = [0.0] * 24
     for issue in ALL_issues:
         if not issue.labels:
             ALL_labels_dict["none"] += 1
