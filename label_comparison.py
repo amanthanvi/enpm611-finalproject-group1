@@ -12,26 +12,36 @@ def compare_labels():
     """
     Compares the distribution of issue creation times by hour.
     """
-    labels_dict:dict = {"none":0}
+    ALL_labels_dict:dict = {"none":0}
     DUP_status_list:List[Issue] = []
     ALL_issues:List[Issue] = DataLoader().get_issues()
     ALL_hourlist:List[float] = [0.0] * 24
     for issue in ALL_issues:
         if not issue.labels:
-            labels_dict["none"] += 1
+            ALL_labels_dict["none"] += 1
         else:
             for label in issue.labels:
-                if label not in labels_dict:
-                    labels_dict[label] = 1
+                if label not in ALL_labels_dict:
+                    ALL_labels_dict[label] = 1
                 else:
-                    labels_dict[label] += 1
+                    ALL_labels_dict[label] += 1
             
                 if "duplicate" in label:
                     DUP_status_list.append(issue)
 
+    ALL_sorted_labels = sorted(ALL_labels_dict, key=ALL_labels_dict.get, reverse=True)
+    ALL_sorted_vals = sorted(list(ALL_labels_dict.values()),reverse=True)
+    ALL_label_percent = [float(format(x*100/len(ALL_issues), '.2f')) for x in ALL_sorted_vals]
+    # Create the plot
+    plt.bar(ALL_sorted_labels[:10], ALL_label_percent[:10])
 
-    print(labels_dict)
-
+    # Add labels and title
+    plt.xlabel('Label Name')
+    plt.xticks(rotation=45, ha='right')
+    plt.ylabel('Percent of Issues')
+    plt.title('Top Labels for All Issues')
+    plt.show() 
+    
     
     DUP_labels_dict:dict = {"none":0}
     DUP_issues:List[Issue] = DuplicateFinder().get_duplicate_issues()
@@ -45,7 +55,20 @@ def compare_labels():
                 else:
                     DUP_labels_dict[label] += 1
 
-    print(DUP_labels_dict)
+
+    DUP_sorted_labels = sorted(DUP_labels_dict, key=DUP_labels_dict.get, reverse=True)
+    DUP_sorted_vals = sorted(list(DUP_labels_dict.values()),reverse=True)
+    DUP_label_percent = [float(format(x*100/len(DUP_issues), '.2f')) for x in DUP_sorted_vals]
+    # Create the plot
+    plt.bar(DUP_sorted_labels[:10], DUP_label_percent[:10])
+
+    # Add labels and title
+    plt.xlabel('Label Name')
+    plt.xticks(rotation=45, ha='right')
+    plt.ylabel('Percent of Issues')
+    plt.title('Top Labels for Duplicate Issues')
+    plt.show() 
+
 
     found_original:List[Issue] = []
     not_found_original:List[Issue] = []
@@ -70,6 +93,7 @@ def compare_labels():
         if check == False:
             not_found_original.append(issue)
     
+
     not_counted:int = 0
     not_labeled:int = 0
     not_labeled_found:int = 0
