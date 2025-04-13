@@ -107,7 +107,7 @@ class DuplicateTime:
         print("Average time for an duplicate issue with 'status/triage' label to be reported:",avg_time_triage)
         print("Average time for an duplicate issue with 'kind/feature' label to be reported:",avg_time_feature,"\n")
         print("It might make sense for the feature labeled issues take the longest because some features may not be implementable until someone tries to implement something similar.")
-        print("This then produces a situation where solving the original issue becomes easier in the process, and the issue is marked as duplicate")
+        print("This then produces a situation where solving the original issue becomes easier in the process, and the issue is marked as duplicate.\n")
 
 
 
