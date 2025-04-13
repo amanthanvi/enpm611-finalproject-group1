@@ -7,9 +7,10 @@ import argparse
 
 import config
 from example_analysis import ExampleAnalysis
-from duplicates_creators import Duplicates
 from label_comparison import DuplicateLabelAnalysis
 from origin_comparison import DuplicateOrigin
+from report_time_comparison import DuplicateTime
+
 
 
 def parse_args():
@@ -53,6 +54,6 @@ elif args.feature == 1:
 elif args.feature == 2:
     DuplicateOrigin().run()
 elif args.feature == 3:
-    pass # TODO call third analysis
+    DuplicateTime().run()
 else:
     print('Need to specify which feature to run with --feature flag.')

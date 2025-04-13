@@ -7,6 +7,8 @@ from data_loader import DataLoader
 from duplicates_finder import DuplicateFinder
 from model import Issue,Event
 import config
+from collections import Counter
+
 
 
 class DuplicateOrigin:  
@@ -60,13 +62,20 @@ class DuplicateOrigin:
         within_5:int = 0
         backwards_dup:float = 0
         pos_avg:int = 0
+        iter = 0
+        backwards_label_list:List[str] = []
         for x in number_delta:
             if x < 0:
                 backwards_dup += 1
+                for label in found_original[iter].labels:
+                    backwards_label_list.append(label)
             else:
                 pos_avg += x
             if abs(x) < 5:
                 within_5 += 1
+            iter+=1
+
+        backwards_label = Counter(backwards_label_list).most_common(1)[0]
 
         pos_avg = float(format(pos_avg/(len(number_delta)-backwards_dup), '.0f'))
         
@@ -85,14 +94,15 @@ class DuplicateOrigin:
         sorted_repeats = sorted(repeats, key=repeats.get, reverse=True)
         sorted_counts = sorted(list(repeats.values()),reverse=True)
 
-        print("Out of", len(DUP_issues), "issues, there are", len(found_original), "issues that specify the issue they are duplicating.")
-        print("There are", within_5, "issues that duplicate an issue within 5 of them (forward or backward). ")
+        print("\nOut of", len(DUP_issues), "issues, there are", len(found_original), "issues that specify the issue they are duplicating.")
+        print("\nThere are", within_5, "issues that duplicate an issue within 5 of them (forward or backward). ")
         print("These are going to be issues that get brought up at the same time and resolved with the issue they refer to. ")
         print("Considering how few of these there are, that means that the programmers rarely solve issues together (or at least report that they do).")
-        print("There are", backwards_dup, "issues that are commented as duplicating an issue made after them. ")
-        print("This means the programmers are not staying consistant with who is actually the duplicate when classifying issues")
-        print("Not including those that refer to an issue created after them, the average amount of issues between the original and duplicate is:", pos_avg, "issues")
-        print("Number of issues that are duplicated more than once:", len(repeats))
+        print("\nThere are", backwards_dup, "issues that are commented as duplicating an issue made after them.")
+        print("The most common label type for these 'backwards issues' is", backwards_label[0], "in", backwards_label[1], "issues")
+        print("This means the programmers are not staying consistant with who is actually the duplicate when fixing these types of issues and are likely focusing on the issue made after")
+        print("\nNot including those that refer to an issue created after them, the average amount of issues between the original and duplicate is:", pos_avg, "issues")
+        print("\nNumber of issues that are duplicated more than once:", len(repeats),"\n")
 
         plt.figure(1)
         plt.bar(sorted_repeats[:25], sorted_counts[:25])

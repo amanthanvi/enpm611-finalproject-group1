@@ -133,13 +133,13 @@ class DuplicateLabelAnalysis:
                 else: 
                     print("uh oh")
 
-        print("Of", len(DUP_issues), "issues with comments suggesting it as duplicate, only", len(found_original), "issues mentioned the orignial they were duplicating")
+        print("\nOf", len(DUP_issues), "issues with comments suggesting it as duplicate, only", len(found_original), "issues mentioned the orignial they were duplicating")
 
         possible_dups:int = not_counted+not_labeled+correct
         print("Number of issues with duplicate label but lack comments mentioning a duplicate: ", not_counted, "/", possible_dups)
         print("Number of issues with comments pointing to a duplicate number but no label: ", not_labeled_found, "/", possible_dups)
         print("Number of issues with comments suggesting duplicate but no label: ", not_labeled_not_found, "/", possible_dups)
-        print("Number of issues that were identified as duplicates in both comments and label: ", correct, "/", possible_dups)
+        print("Number of issues that were identified as duplicates in both comments and label: ", correct, "/", possible_dups, "\n")
 
 
 if __name__ == '__main__':
