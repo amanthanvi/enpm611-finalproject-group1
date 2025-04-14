@@ -100,9 +100,9 @@ class DuplicateTime:
         print("\nNumber of days between when the issue is reported, and then labeled as a duplicate:")
         print("0-1 Days:", days_0_1, "| 1-5 Days:", days_1_5, "| 5-30 Days:", days_5_30, "| 30+ Days:", days_30plus)
         print("\nAverage time between when a duplicate issue created and when it is reported", avg_time)
-        print("\nAverage time for an duplicate issue with 'kind/bug' label to be reported:",avg_time_bug)
-        print("Average time for an duplicate issue with 'status/triage' label to be reported:",avg_time_triage)
-        print("Average time for an duplicate issue with 'kind/feature' label to be reported:",avg_time_feature,"\n")
+        print("\nAverage time for a duplicate issue with 'kind/bug' label to be reported:",avg_time_bug)
+        print("Average time for a duplicate issue with 'status/triage' label to be reported:",avg_time_triage)
+        print("Average time for a duplicate issue with 'kind/feature' label to be reported:",avg_time_feature,"\n")
         print("It might make sense for the feature labeled issues take the longest because some features may not be implementable until someone tries to implement something similar.")
         print("This then produces a situation where solving the original issue becomes easier in the process, and the issue is marked as duplicate.\n")
 

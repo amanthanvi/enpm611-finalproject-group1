@@ -1,49 +1,21 @@
-# ENPM611 Project Application Template
+# ENPM611 Project 
 
-This is the template for the ENPM611 class project. Use this template in conjunction with the provided data to implement an application that analyzes GitHub issues for the [poetry](https://github.com/python-poetry/poetry/issues) Open Source project and generates interesting insights.
+# Project Theme: Duplicates
+This Project intends to examine duplicate issues by investigating when they were made, what labels they have, and what issues they duplicate.
+What defines a duplicate issue in this project are those which have event comments suggesting so. While there is a duplicate label that is often attached to issues, we will show as part of our analysis that is not as useful.
 
-This application template implements some of the basic functions:
+# How to Run:
+Simply run the file "run.py" and add "--feature #" where the number is 0-3.
+When you run a feature, you get to choose which data set you use. entering 1 or 2 for the associated data set will use the one selected. 
 
-- `data_loader.py`: Utility to load the issues from the provided data file and returns the issues in a runtime data structure (e.g., objects)
-- `model.py`: Implements the data model into which the data file is loaded. The data can then be accessed by accessing the fields of objects.
-- `config.py`: Supports configuring the application via the `config.json` file. You can add other configuration paramters to the `config.json` file.
-- `run.py`: This is the module that will be invoked to run your application. Based on the `--feature` command line parameter, one of the three analyses you implemented will be run. You need to extend this module to call other analyses.
+Feature 0 is the example analysis given in the project template. 
 
-With the utility functions provided, you should focus on implementing creative analyses that generate intersting and insightful insights.
+# Feature 1:
+This feature examines what % of duplicate issues certain labels make up (will total over 100% as many issues have multiple labels). It then compares that % spread to the average issue and sees which labels are more common for duplicates. 
+The feature then looks into what issues are labeled duplicates, and which of those thought to be duplicates actually reference the issue they are duplicating. Finally, it will show how many issues are thought to be duplicates, how many reference being a duplicate, how many reference the original issue, how many do not, and how many are both identified as duplicates in the event comments as well as the issue label.
 
-In addition to the utility functions, an example analysis has also been implemented in `example_analysis.py`. It illustrates how to use the provided utility functions and how to produce output.
+# Feature 2:
+This feature also looks at what issues reference the issues they are duplicating. It also displays how many issues duplicate an issue with a number within 5 of them. Some issues also reference issues that were made after them, so the feature looks into what labels those issues tend to have. Finally, the feature looks at which issues are most duplicated.
 
-## Setup
-
-To get started, your team should create a fork of this repository. Then, every team member should clone your repository to their local computer. 
-
-
-### Install dependencies
-
-In the root directory of the application, create a virtual environment, activate that environment, and install the dependencies like so:
-
-```
-pip install -r requirements.txt
-```
-
-### Download and configure the data file
-
-Download the data file (in `json` format) from the project assignment in Canvas and update the `config.json` with the path to the file. Note, you can also specify an environment variable by the same name as the config setting (`ENPM611_PROJECT_DATA_PATH`) to avoid committing your personal path to the repository.
-
-
-### Run an analysis
-
-With everything set up, you should be able to run the existing example analysis:
-
-```
-python run.py --feature 0
-```
-
-That will output basic information about the issues to the command line.
-
-
-## VSCode run configuration
-
-To make the application easier to debug, runtime configurations are provided to run each of the analyses you are implementing. When you click on the run button in the left-hand side toolbar, you can select to run one of the three analyses or run the file you are currently viewing. That makes debugging a little easier. This run configuration is specified in the `.vscode/launch.json` if you want to modify it.
-
-The `.vscode/settings.json` also customizes the VSCode user interface sligthly to make navigation and debugging easier. But that is a matter of preference and can be turned off by removing the appropriate settings.
+# Feature 3:
+This feature is a bit more general than the previous 2 but focuses a bit more on timing. The first thing it does is shows which user is most likely to make a duplicate issue, and who is the most likely to identify the issue as a duplicate. It then investigates if duplicate issues are more frequently made at certain times of day than the average issue. Finally it looks at how long it takes for the average duplicate to be identified as one, and how that compares between issues with certain labels.
