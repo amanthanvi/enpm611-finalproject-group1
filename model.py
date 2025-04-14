@@ -1,6 +1,7 @@
 """
 Implements a runtime data model that can be used to access
 the properties contained in the issues JSON.
+NO CHANGES WERE MADE FOR PROJECT
 """
 
 from typing import List, Dict, Set, Tuple

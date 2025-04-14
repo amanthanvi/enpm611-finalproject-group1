@@ -27,14 +27,15 @@ class DuplicateOrigin:
     
     def run(self):
         """
-        Compares labels between all issues and duplicate issues, seeing which label is more frequent for duplicate issues
-        Also looks at what are considered duplicate issues, by label or by mention in comment
+        This feature focuses more on what we can learn from duplicate issues that refer to the issues they are duplicating
         """
         DUP_issues:List[Issue] = DuplicateFinder().get_duplicate_issues()
         found_original:List[Issue] = []
         original_number:List[int] = []
         number_delta:list[int] = []
 
+        # this for loop finds all of the duplicate issues that refer to other issues and stores them and their number
+        # it also stores the issue number they refer to and calculates the difference between the two
         not_found_original:List[Issue] = []
         for issue in DUP_issues:
             check: bool = False
@@ -59,7 +60,8 @@ class DuplicateOrigin:
             if check == False:
                 not_found_original.append(issue)
 
-
+        # this buckets the delta between duplicate issue and original issue into different groups
+        # the ones we care about are the within 5, and when the duplicate issue was actually made before the "original"
         within_5:int = 0
         backwards_dup:float = 0
         pos_avg:int = 0
@@ -78,8 +80,10 @@ class DuplicateOrigin:
 
         backwards_label = Counter(backwards_label_list).most_common(1)[0]
 
+        # this calculates the average distance between duplicate and original issue numbers and finds the average only for those where original issue actually came first
         pos_avg = float(format(pos_avg/(len(number_delta)-backwards_dup), '.0f'))
-        
+
+        # This helps count which issues are the most commonly duplicated   
         seen = set()
         repeats:dict = {}
         for item in original_number:
@@ -104,6 +108,7 @@ class DuplicateOrigin:
         print("\nNot including those that refer to an issue created after them, the average amount of issues between the original and duplicate is:", pos_avg, "issues")
         print("\nNumber of issues that are duplicated more than once:", len(repeats),"\n")
 
+        # this graph shows off the most common issues to be duplicated
         plt.figure(1)
         plt.bar(sorted_repeats[:25], sorted_counts[:25])
         plt.xlabel('Issues')

@@ -25,14 +25,16 @@ class DuplicateLabelAnalysis:
     
     def run(self):
         """
-        Compares labels between all issues and duplicate issues, seeing which label is more frequent for duplicate issues
-        Also looks at what are considered duplicate issues, by label or by mention in comment
+        This feature focuses on labels for duplicate issues and what we can learn about them
         """
 
+        # grabbing all issues and duplicate issues for comparison, and the dictionary list for how many of each label appears in duplicate issues
         ALL_issues:List[Issue] = DataLoader().get_issues()
         DUP_issues:List[Issue] = DuplicateFinder().get_duplicate_issues()
         DUP_labels_dict:dict = DuplicateFinder().get_label_count()
 
+        # this for loop creates a dictionary entry for each label and sets its value to the number of appearances that label has
+        # this also stores all of the issues with the duplicate label, which is different than how we decide what is a duplicate
         ALL_labels_dict:dict = {"none":0}
         DUP_status_list:List[Issue] = []
         for issue in ALL_issues:
@@ -48,14 +50,20 @@ class DuplicateLabelAnalysis:
                     if "duplicate" in label:
                         DUP_status_list.append(issue)
 
+
+        # sorting the labels by number of appearances
         ALL_sorted_labels = sorted(ALL_labels_dict, key=ALL_labels_dict.get, reverse=True)
+        # making the following list of number of appearances
         ALL_sorted_vals = sorted(list(ALL_labels_dict.values()),reverse=True)
+        # converting the number of appearances of each label to a % of issues they are in
         ALL_label_percent = [float(format(x*100/len(ALL_issues), '.2f')) for x in ALL_sorted_vals]
 
+        # this does the same as the above 3 lines of code except for duplicate issues instead of all issues
         DUP_sorted_labels = sorted(DUP_labels_dict, key=DUP_labels_dict.get, reverse=True)
         DUP_sorted_vals = sorted(list(DUP_labels_dict.values()),reverse=True)
         DUP_label_percent = [float(format(x*100/len(DUP_issues), '.2f')) for x in DUP_sorted_vals]
     
+        # this then compares the percentages of appearances per issue for the duplicates list and all issues list and finds the difference
         comparison_vals:List[float] = []
         for label in ALL_sorted_labels[:10]:
             percent_val = float(format(DUP_labels_dict[label]*100/len(DUP_issues), '.2f'))
@@ -63,7 +71,8 @@ class DuplicateLabelAnalysis:
         
         label_percent_delta = [float(format(a - b, '.2f')) for a, b in zip(comparison_vals, ALL_label_percent)]
         
-        # Create the plot
+
+        # these 3 plots present the top labels for each issue grouping, and the delta between then for the most common labels
         plt.figure(1)
         plt.bar(ALL_sorted_labels[:10], ALL_label_percent[:10])
         plt.xlabel('Label Name')
@@ -87,6 +96,9 @@ class DuplicateLabelAnalysis:
         plt.title('Percent of Labels for Duplicate Issues vs All Issues')
         plt.show() 
 
+        # this for loop parses through the event comments for duplicate issues and finds whenever a number is mentioned after the word "duplicate"
+        # finding the word help determine if the comments suggest an original issue for this one to be copying
+        # this also compiles all of the issues that do not refer to the issues they are supposedly duplicating
         found_original:List[Issue] = []
         not_found_original:List[Issue] = []
         for issue in DUP_issues:
@@ -110,7 +122,8 @@ class DuplicateLabelAnalysis:
             if check == False:
                 not_found_original.append(issue)
         
-
+        # this counts all of the issues that are both labeled duplicates and refer to duplicates, determining them as correct
+        # this also counts for when the label is not included, or the label is included but the word duplicate is never mentioned in the events
         not_counted:int = 0
         not_labeled:int = 0
         not_labeled_found:int = 0

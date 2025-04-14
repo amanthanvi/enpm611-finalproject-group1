@@ -16,11 +16,16 @@ class DuplicateTime:
         pass
     
     def run(self):
+        """
+        This feature is a bit more general than the other two, but does mostly focus around different things involving time
+        """
 
+        # loading in data
         ALL_issues:List[Issue] = DataLoader().get_issues()
         DUP_issues:List[Issue] = DuplicateFinder().get_duplicate_issues()
         DUP_events:List[Event] = DuplicateFinder().get_duplicate_events()
-                       
+
+        # this chart shows which users are most likely to create an issue that gets reported as duplicates               
         top_n:int = 50
         title1:str = f"Top {top_n} duplicate issue creators"
         df = pd.DataFrame.from_records([{'creator':issue.creator} for issue in DUP_issues])
@@ -29,6 +34,7 @@ class DuplicateTime:
         df_hist.set_ylabel("# of issues created")
         plt.show() 
 
+        # this chart shows which users are most likely to say an issue is a duplicate in the event comments
         title2:str = f"Top {top_n} duplicate issue reporters"
         df = pd.DataFrame.from_records([{'author':e.author} for e in DUP_events])
         df_hist = df.groupby(df["author"]).value_counts().nlargest(top_n).plot(kind="bar", figsize=(14,8), title=title2)
@@ -36,6 +42,7 @@ class DuplicateTime:
         df_hist.set_ylabel("# of issues that author reported as duplicates")
         plt.show() 
 
+        # these two for loops look at what hours of the day issues are made
         ALL_hourlist:List[float] = [0.0] * 24
         for issue in ALL_issues:
             ALL_hourlist[issue.created_date.hour] +=1
@@ -44,6 +51,7 @@ class DuplicateTime:
         for issue in DUP_issues:
             DUP_hourlist[issue.created_date.hour] +=1
 
+        # this then finds what % of issues are made at each hour of day and compares that trend between duplicate and all issues
         ALL_hours_percent = [float(format(x*100/len(ALL_issues), '.2f')) for x in ALL_hourlist]
         DUP_hours_percent = [float(format(x*100/len(DUP_issues), '.2f')) for x in DUP_hourlist]
         hour_percent_delta = [float(format(a - b, '.2f')) for a, b in zip(DUP_hours_percent, ALL_hours_percent)]
@@ -53,9 +61,8 @@ class DuplicateTime:
             print("Hour", hour+1, ":", hour_percent_delta[hour], "|" , end=" ")
         print("\nThere does not appear to be any timespan where duplicates are made more frequently than the average issue")
 
-        """
-        Reports the time taken to mark issues as duplicates.
-        """
+        # this finds the time between when an issue is created and when an event identifies it as a duplicate
+        # the times are put into different range buckets
         time_list:List[datetime] = [DUP_events[i].event_date-DUP_issues[i].created_date for i in range(len(DUP_issues))]
         days_0_1:int = 0
         days_1_5:int = 0
@@ -73,10 +80,11 @@ class DuplicateTime:
             else:
                 print(time)
 
+        # this finds the average time between when issues are created and reported as duplicates
         sumval = sum(time_list,timedelta())
         avg_time = sumval/len(time_list)
 
-
+        # this looks at the 3 most common labels and see how many duplicate issues have each label
         time_list_bug:List[datetime] = []
         time_list_triage:List[datetime] = []
         time_list_feature:List[datetime] = []
@@ -88,6 +96,7 @@ class DuplicateTime:
             if "kind/feature" in DUP_issues[i].labels:
                 time_list_feature.append(DUP_events[i].event_date-DUP_issues[i].created_date)
         
+        # this looks at those 3 label lists and finds the average time between issue creation and duplicate reporting for each
         sumval_bug = sum(time_list_bug,timedelta())
         avg_time_bug = sumval_bug/len(time_list_bug)
         sumval_triage = sum(time_list_triage,timedelta())

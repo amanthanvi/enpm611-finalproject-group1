@@ -9,10 +9,12 @@ import config
 
 class DuplicateFinder:
     """
-    Loads the issue data into a runtime object.
+    This loads in all of the issues and finds which ones have comments refering to duplicates. It then stores those related issues and comments in their own lists
     """
     
     def __init__(self):
+
+        # this finds the duplicate issues and events and stores them
         issues:List[Issue] = DataLoader().get_issues()
         duplicate_issues:List[Issue] = []
         duplicate_events:List[Event] = []
@@ -36,6 +38,7 @@ class DuplicateFinder:
         return self.duplicate_events
     
     def get_label_count(self):
+        # this function creates a dictionary which goes through the duplicate issues and counts how many of each labels appears, then returns the dictionary
         DUP_labels_dict:dict = {"none":0}
         for issue in self.duplicate_issues:
             if not issue.labels:
