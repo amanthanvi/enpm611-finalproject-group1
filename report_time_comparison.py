@@ -17,30 +17,29 @@ class DuplicateTime:
     
     def run(self):
 
-        duplicate_issues:List[Issue] = DuplicateFinder().get_duplicate_issues()
-        duplicate_events:List[Event] = DuplicateFinder().get_duplicate_events()
+        ALL_issues:List[Issue] = DataLoader().get_issues()
+        DUP_issues:List[Issue] = DuplicateFinder().get_duplicate_issues()
+        DUP_events:List[Event] = DuplicateFinder().get_duplicate_events()
                        
         top_n:int = 50
         title1:str = f"Top {top_n} duplicate issue creators"
-        df = pd.DataFrame.from_records([{'creator':issue.creator} for issue in duplicate_issues])
+        df = pd.DataFrame.from_records([{'creator':issue.creator} for issue in DUP_issues])
         df_hist = df.groupby(df["creator"]).value_counts().nlargest(top_n).plot(kind="bar", figsize=(14,8), title=title1)
         df_hist.set_xlabel("Creator Names")
         df_hist.set_ylabel("# of issues created")
         plt.show() 
 
         title2:str = f"Top {top_n} duplicate issue reporters"
-        df = pd.DataFrame.from_records([{'author':e.author} for e in duplicate_events])
+        df = pd.DataFrame.from_records([{'author':e.author} for e in DUP_events])
         df_hist = df.groupby(df["author"]).value_counts().nlargest(top_n).plot(kind="bar", figsize=(14,8), title=title2)
         df_hist.set_xlabel("Creator Names")
         df_hist.set_ylabel("# of issues that author reported as duplicates")
         plt.show() 
 
-        ALL_issues:List[Issue] = DataLoader().get_issues()
         ALL_hourlist:List[float] = [0.0] * 24
         for issue in ALL_issues:
             ALL_hourlist[issue.created_date.hour] +=1
 
-        DUP_issues:List[Issue] = DuplicateFinder().get_duplicate_issues()
         DUP_hourlist:List[float] = [0.0] * 24
         for issue in DUP_issues:
             DUP_hourlist[issue.created_date.hour] +=1
@@ -57,9 +56,7 @@ class DuplicateTime:
         """
         Reports the time taken to mark issues as duplicates.
         """
-        issues:List[Issue] = DuplicateFinder().get_duplicate_issues()
-        events:list[Event] = DuplicateFinder().get_duplicate_events()
-        time_list:List[datetime] = [events[i].event_date-issues[i].created_date for i in range(len(issues))]
+        time_list:List[datetime] = [DUP_events[i].event_date-DUP_issues[i].created_date for i in range(len(DUP_issues))]
         days_0_1:int = 0
         days_1_5:int = 0
         days_5_30:int = 0
@@ -83,13 +80,13 @@ class DuplicateTime:
         time_list_bug:List[datetime] = []
         time_list_triage:List[datetime] = []
         time_list_feature:List[datetime] = []
-        for i in range(len(issues)):
-            if "kind/bug" in issues[i].labels:
-                time_list_bug.append(events[i].event_date-issues[i].created_date)
-            if "status/triage" in issues[i].labels:
-                 time_list_triage.append(events[i].event_date-issues[i].created_date)
-            if "kind/feature" in issues[i].labels:
-                time_list_feature.append(events[i].event_date-issues[i].created_date)
+        for i in range(len(DUP_issues)):
+            if "kind/bug" in DUP_issues[i].labels:
+                time_list_bug.append(DUP_events[i].event_date-DUP_issues[i].created_date)
+            if "status/triage" in DUP_issues[i].labels:
+                 time_list_triage.append(DUP_events[i].event_date-DUP_issues[i].created_date)
+            if "kind/feature" in DUP_issues[i].labels:
+                time_list_feature.append(DUP_events[i].event_date-DUP_issues[i].created_date)
         
         sumval_bug = sum(time_list_bug,timedelta())
         avg_time_bug = sumval_bug/len(time_list_bug)
@@ -101,7 +98,7 @@ class DuplicateTime:
 
 
         print("\nNumber of days between when the issue is reported, and then labeled as a duplicate:")
-        print("Days 0-1:", days_0_1, "| Days 1-5:", days_1_5, "| Days 5-30:", days_5_30, "| Days 30+:", days_30plus)
+        print("0-1 Days:", days_0_1, "| 1-5 Days:", days_1_5, "| 5-30 Days:", days_5_30, "| 30+ Days:", days_30plus)
         print("\nAverage time between when a duplicate issue created and when it is reported", avg_time)
         print("\nAverage time for an duplicate issue with 'kind/bug' label to be reported:",avg_time_bug)
         print("Average time for an duplicate issue with 'status/triage' label to be reported:",avg_time_triage)

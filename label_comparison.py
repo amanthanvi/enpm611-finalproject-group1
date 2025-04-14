@@ -28,9 +28,13 @@ class DuplicateLabelAnalysis:
         Compares labels between all issues and duplicate issues, seeing which label is more frequent for duplicate issues
         Also looks at what are considered duplicate issues, by label or by mention in comment
         """
+
+        ALL_issues:List[Issue] = DataLoader().get_issues()
+        DUP_issues:List[Issue] = DuplicateFinder().get_duplicate_issues()
+        DUP_labels_dict:dict = DuplicateFinder().get_label_count()
+
         ALL_labels_dict:dict = {"none":0}
         DUP_status_list:List[Issue] = []
-        ALL_issues:List[Issue] = DataLoader().get_issues()
         for issue in ALL_issues:
             if not issue.labels:
                 ALL_labels_dict["none"] += 1
@@ -47,18 +51,11 @@ class DuplicateLabelAnalysis:
         ALL_sorted_labels = sorted(ALL_labels_dict, key=ALL_labels_dict.get, reverse=True)
         ALL_sorted_vals = sorted(list(ALL_labels_dict.values()),reverse=True)
         ALL_label_percent = [float(format(x*100/len(ALL_issues), '.2f')) for x in ALL_sorted_vals]
-        # Create the plot
-        
-        
-        DUP_issues:List[Issue] = DuplicateFinder().get_duplicate_issues()
-        DUP_labels_dict:dict = DuplicateFinder().get_label_count()
-
 
         DUP_sorted_labels = sorted(DUP_labels_dict, key=DUP_labels_dict.get, reverse=True)
         DUP_sorted_vals = sorted(list(DUP_labels_dict.values()),reverse=True)
         DUP_label_percent = [float(format(x*100/len(DUP_issues), '.2f')) for x in DUP_sorted_vals]
     
-
         comparison_vals:List[float] = []
         for label in ALL_sorted_labels[:10]:
             percent_val = float(format(DUP_labels_dict[label]*100/len(DUP_issues), '.2f'))
@@ -132,10 +129,10 @@ class DuplicateLabelAnalysis:
                     not_labeled_not_found += 1
                 else: 
                     print("uh oh")
+        
+        possible_dups:int = not_counted+not_labeled+correct
 
         print("\nOf", len(DUP_issues), "issues with comments suggesting it as duplicate, only", len(found_original), "issues mentioned the orignial they were duplicating")
-
-        possible_dups:int = not_counted+not_labeled+correct
         print("Number of issues with duplicate label but lack comments mentioning a duplicate: ", not_counted, "/", possible_dups)
         print("Number of issues with comments pointing to a duplicate number but no label: ", not_labeled_found, "/", possible_dups)
         print("Number of issues with comments suggesting duplicate but no label: ", not_labeled_not_found, "/", possible_dups)

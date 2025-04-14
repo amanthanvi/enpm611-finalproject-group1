@@ -59,6 +59,7 @@ class DuplicateOrigin:
             if check == False:
                 not_found_original.append(issue)
 
+
         within_5:int = 0
         backwards_dup:float = 0
         pos_avg:int = 0
@@ -78,7 +79,6 @@ class DuplicateOrigin:
         backwards_label = Counter(backwards_label_list).most_common(1)[0]
 
         pos_avg = float(format(pos_avg/(len(number_delta)-backwards_dup), '.0f'))
-        
         
         seen = set()
         repeats:dict = {}
