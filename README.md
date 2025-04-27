@@ -19,3 +19,18 @@ This feature also looks at what issues reference the issues they are duplicating
 
 # Feature 3:
 This feature is a bit more general than the previous 2 but focuses a bit more on timing. The first thing it does is shows which user is most likely to make a duplicate issue, and who is the most likely to identify the issue as a duplicate. It then investigates if duplicate issues are more frequently made at certain times of day than the average issue. Finally it looks at how long it takes for the average duplicate to be identified as one, and how that compares between issues with certain labels.
+
+
+# Testing
+Use the following command to run a test
+```
+python -m coverage run -m unittest tests/{test_to_run}.py
+```
+Then run the following command to get a coverage report
+```
+python -m coverage report 
+```
+If working in VSCode, the *Coverage Gutters* extension can be used to highlight which lines of code have been tested.  Rerun the coverage report and export to an xml file to see results
+```
+python -m coverage xml
+```
